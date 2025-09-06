@@ -1,0 +1,5 @@
+# Tkinter GUI (usually included with Python)
+tk
+
+# Optional: for HTTP requests or future API extensions
+requests
