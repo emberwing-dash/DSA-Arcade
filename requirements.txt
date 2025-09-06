@@ -3,3 +3,6 @@ tk
 
 # Optional: for HTTP requests or future API extensions
 requests
+
+pillow~=11.3.0
+pygame~=2.6.1
