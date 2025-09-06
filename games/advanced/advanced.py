@@ -1,15 +1,16 @@
 import pygame
 import os
 import heapq
+from advanced_maze import get_random_maze
 
 # --- Settings ---
 TILE_SIZE = 32
 FPS = 10
 
 ASSET_DIR = os.path.dirname(__file__)
-BLOCK_IMG = os.path.join(ASSET_DIR, "blocks", "block.png")
-
-PACMAN_DIR = os.path.join(ASSET_DIR, "pacman")
+BLOCK_IMG = os.path.join(ASSET_DIR, "assets", "blocks", "block.PNG")
+PACMAN_DIR = os.path.join(ASSET_DIR, "assets", "pacman")
+FOOD_IMG = os.path.join(ASSET_DIR, "assets", "food", "food.png")  # updated path
 DIRECTIONS = ["up", "down", "left", "right"]
 
 # --- Dijkstra Algorithm ---
@@ -29,7 +30,6 @@ def dijkstra(graph, start, goal):
                 parent[neighbor] = node
                 heapq.heappush(pq, (new_dist, neighbor))
 
-    # Reconstruct path
     path = []
     node = goal
     while node is not None:
@@ -51,20 +51,22 @@ class PacmanGame:
 
         self.clock = pygame.time.Clock()
 
-        # Load block image
+        # Load images
         self.block_img = pygame.image.load(BLOCK_IMG).convert_alpha()
         self.block_img = pygame.transform.scale(self.block_img, (TILE_SIZE, TILE_SIZE))
 
-        # Load Pacman sprites
+        self.food_img = pygame.image.load(FOOD_IMG).convert_alpha()
+        self.food_img = pygame.transform.scale(self.food_img, (TILE_SIZE, TILE_SIZE))
+
         self.pacman_sprites = {d: [] for d in DIRECTIONS}
         for d in DIRECTIONS:
             folder = os.path.join(PACMAN_DIR, f"pacman-{d}")
             for i in range(1, 4):
-                img = pygame.image.load(os.path.join(folder, f"{i}.png")).convert_alpha()
+                img_path = os.path.join(folder, f"{i}.png")
+                img = pygame.image.load(img_path).convert_alpha()
                 img = pygame.transform.scale(img, (TILE_SIZE, TILE_SIZE))
                 self.pacman_sprites[d].append(img)
 
-        # Path
         self.graph = self.make_graph()
         self.path = dijkstra(self.graph, self.start, self.goal)
         self.current_index = 0
@@ -75,7 +77,7 @@ class PacmanGame:
         graph = {}
         for r in range(self.rows):
             for c in range(self.cols):
-                if self.grid[r][c] == 1:  # wall
+                if self.grid[r][c] == 1:
                     continue
                 neighbors = []
                 for dr, dc, d in [(0,1,"right"),(0,-1,"left"),(1,0,"down"),(-1,0,"up")]:
@@ -102,12 +104,17 @@ class PacmanGame:
                 if event.type == pygame.QUIT:
                     running = False
 
-            # Draw grid
             self.screen.fill((0,0,0))
+
+            # Draw grid
             for r in range(self.rows):
                 for c in range(self.cols):
                     if self.grid[r][c] == 1:
                         self.screen.blit(self.block_img, (c*TILE_SIZE, r*TILE_SIZE))
+
+            # Draw food at goal
+            goal_r, goal_c = self.goal
+            self.screen.blit(self.food_img, (goal_c*TILE_SIZE, goal_r*TILE_SIZE))
 
             # Move Pacman along path
             if self.current_index < len(self.path)-1:
@@ -118,30 +125,23 @@ class PacmanGame:
                 self.screen.blit(pacman_sprite, (curr[1]*TILE_SIZE, curr[0]*TILE_SIZE))
 
                 self.anim_frame += 1
-                if self.anim_frame % 6 == 0:  # move to next step every few frames
+                if self.anim_frame % 6 == 0:
                     self.current_index += 1
             else:
-                # Goal reached
-                r, c = self.goal
+                # Pacman reached food
                 pacman_sprite = self.pacman_sprites[self.direction][self.anim_frame//3 % 3]
-                self.screen.blit(pacman_sprite, (c*TILE_SIZE, r*TILE_SIZE))
+                self.screen.blit(pacman_sprite, (goal_c*TILE_SIZE, goal_r*TILE_SIZE))
 
             pygame.display.flip()
 
         pygame.quit()
 
-# --- Run directly for testing ---
+# --- Run directly ---
 if __name__ == "__main__":
-    grid = [
-        [0,0,0,0,0,0],
-        [0,1,1,1,1,0],
-        [0,0,0,1,0,0],
-        [0,1,0,0,0,1],
-        [0,0,0,1,0,0],
-        [0,0,0,0,0,0],
-    ]
-    start = (0,0)
-    goal = (5,5)
+    maze = get_random_maze()
+    grid = maze["grid"]
+    start = maze["start"]
+    goal = maze["goal"]
 
     game = PacmanGame(grid, start, goal)
     game.run()
