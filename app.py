@@ -3,7 +3,9 @@ import sys
 import os
 import threading
 import tkinter as tk
+import subprocess
 from ui.editor import CodeEditorUI
+
 
 # ------------------- Button Class -------------------
 class ImageButton:
@@ -19,6 +21,7 @@ class ImageButton:
         if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
             if self.rect.collidepoint(event.pos):
                 threading.Thread(target=self.callback).start()
+
 
 # ------------------- App Class -------------------
 class App:
@@ -89,11 +92,20 @@ class App:
         self.buttons = []
         width, height = self.screen.get_size()
         x = (width - self.LEVEL_SIZE[0]) // 2
-        start_y = height // 2 - (self.LEVEL_SIZE[1]*3 + 30) // 2
+        start_y = height // 2 - (self.LEVEL_SIZE[1] * 3 + 30) // 2
 
         self.buttons.append(ImageButton(self.images["beginner"], x, start_y, lambda: self.launch_editor("Beginner")))
-        self.buttons.append(ImageButton(self.images["intermediate"], x, start_y + self.LEVEL_SIZE[1] + 15, lambda: self.launch_editor("Intermediate")))
-        self.buttons.append(ImageButton(self.images["advanced"], x, start_y + (self.LEVEL_SIZE[1] + 15)*2, lambda: self.launch_editor("Advanced")))
+
+        # Intermediate button now launches bg1.py
+        self.buttons.append(ImageButton(
+            self.images["intermediate"],
+            x,
+            start_y + self.LEVEL_SIZE[1] + 15,
+            self.launch_bg1
+        ))
+
+        self.buttons.append(ImageButton(self.images["advanced"], x, start_y + (self.LEVEL_SIZE[1] + 15) * 2,
+                                        lambda: self.launch_editor("Advanced")))
 
         back_x = width - self.BACK_SIZE[0] - 20
         back_y = height - self.BACK_SIZE[1] - 20
@@ -107,7 +119,18 @@ class App:
             editor_root.geometry("900x700")
             CodeEditorUI(editor_root)
             editor_root.mainloop()
+
         threading.Thread(target=run_editor).start()
+
+    # ---------------- Launch BG1 -----------------
+    def launch_bg1(self):
+        bg1_path = os.path.join(os.path.dirname(__file__), "games", "intermediate", "transition", "bg1.py")
+        if os.path.exists(bg1_path):
+            subprocess.Popen(["python", bg1_path])
+            pygame.quit()
+            sys.exit()
+        else:
+            print(f"❌ bg1.py not found at {bg1_path}")
 
     # ---------------- Quit -----------------
     def quit_game(self):
@@ -133,6 +156,7 @@ class App:
                 scale_ratio = max_width / orig_w
                 logo_width = max_width
                 logo_height = int(orig_h * scale_ratio)
+
                 self.logo = pygame.transform.smoothscale(self.logo_original, (logo_width, logo_height))
 
                 logo_x = (width - logo_width) // 2
@@ -144,6 +168,7 @@ class App:
 
             pygame.display.flip()
             self.clock.tick(60)
+
 
 # ------------------- Run App -------------------
 if __name__ == "__main__":
