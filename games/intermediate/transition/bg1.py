@@ -1,7 +1,7 @@
 import pygame
 import os
 import sys
-from BG2Scene import BG2Scene  # Import your BG2Scene file
+
 
 class BackgroundTransition:
     def __init__(self, screen):
@@ -46,13 +46,10 @@ class BackgroundTransition:
                     pygame.quit()
                     sys.exit()
 
-            # Calculate alpha
-            if frame < half_frames:
-                alpha = int((frame / half_frames) * 255)  # Fade in
-            else:
-                alpha = int(((total_frames - frame) / half_frames) * 255)  # Fade out
+            # Fade in/out alpha
+            alpha = int((frame / half_frames) * 255) if frame < half_frames else int(
+                ((total_frames - frame) / half_frames) * 255)
 
-            # Draw
             self.screen.fill((0, 0, 0))
             temp_img = self.bg_img.copy()
             temp_img.set_alpha(alpha)
@@ -66,7 +63,8 @@ class BackgroundTransition:
         if self.audio_loaded:
             pygame.mixer.music.stop()
 
-        # After BG1 fade finishes, launch BG2Scene
+        # Transition → BG2Scene
+        from BG2Scene import BG2Scene
         bg2_scene = BG2Scene(self.screen)
         bg2_scene.run()
 
@@ -74,9 +72,8 @@ class BackgroundTransition:
 if __name__ == "__main__":
     pygame.init()
     screen = pygame.display.set_mode((800, 600))
-    pygame.display.set_caption("BG1 -> BG2 Transition with Dora")
+    pygame.display.set_caption("BG1 -> BG2 Transition")
 
     bg1 = BackgroundTransition(screen)
     bg1.fade_in_out(10)
-
     pygame.quit()

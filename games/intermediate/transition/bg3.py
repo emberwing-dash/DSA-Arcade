@@ -75,7 +75,7 @@ class TypewriterDialogue:
             self.active = False  # all sections done
 
 # ---------------- BG4 Scene ----------------
-class BG4Scene:
+class BG3Scene:
     def __init__(self, screen):
         self.screen = screen
         self.clock = pygame.time.Clock()
