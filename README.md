@@ -1,4 +1,6 @@
-🚀 DSA Arcade – Gamifying Data Structures & Algorithms
+🌟🌟🌟
+🚀 DSA ARCADE – GAMIFYING DATA STRUCTURES & ALGORITHMS 🎮
+🌟🌟🌟
 
 DSA Arcade is an interactive learning platform that transforms Data Structures & Algorithms (DSA) into fun, engaging, and gamified experiences.
 Built with Python (Pygame + Tkinter) and a prototype website, this project helps learners strengthen their problem-solving skills through games and challenges.
