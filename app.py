@@ -2,8 +2,8 @@ import pygame
 import sys
 import os
 import threading
-import tkinter as tk
 import subprocess
+import tkinter as tk
 from ui.editor import CodeEditorUI
 
 
@@ -94,9 +94,10 @@ class App:
         x = (width - self.LEVEL_SIZE[0]) // 2
         start_y = height // 2 - (self.LEVEL_SIZE[1] * 3 + 30) // 2
 
-        self.buttons.append(ImageButton(self.images["beginner"], x, start_y, lambda: self.launch_editor("Beginner")))
+        # Beginner button launches appleFall.py
+        self.buttons.append(ImageButton(self.images["beginner"], x, start_y, self.launch_apple_fall))
 
-        # Intermediate button now launches bg1.py
+        # Intermediate button launches bg1.py
         self.buttons.append(ImageButton(
             self.images["intermediate"],
             x,
@@ -111,6 +112,16 @@ class App:
         back_y = height - self.BACK_SIZE[1] - 20
         self.buttons.append(ImageButton(self.images["back"], back_x, back_y, self.show_start_ui))
 
+    # ---------------- Launch appleFall.py -----------------
+    def launch_apple_fall(self):
+        apple_fall_path = os.path.join(os.path.dirname(__file__), "games", "beginner", "transitions", "appleFall.py")
+        if os.path.exists(apple_fall_path):
+            subprocess.Popen(["python", apple_fall_path])
+            pygame.quit()
+            sys.exit()
+        else:
+            print(f"❌ appleFall.py not found at {apple_fall_path}")
+
     # ---------------- Launch Tkinter Editor -----------------
     def launch_editor(self, level):
         def run_editor():
@@ -119,10 +130,9 @@ class App:
             editor_root.geometry("900x700")
             CodeEditorUI(editor_root)
             editor_root.mainloop()
-
         threading.Thread(target=run_editor).start()
 
-    # ---------------- Launch BG1 -----------------
+    # ---------------- Launch bg1.py -----------------
     def launch_bg1(self):
         bg1_path = os.path.join(os.path.dirname(__file__), "games", "intermediate", "transition", "bg1.py")
         if os.path.exists(bg1_path):

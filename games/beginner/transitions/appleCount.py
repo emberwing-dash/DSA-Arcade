@@ -37,7 +37,6 @@ class TypewriterDialogue:
     def update(self):
         if not self.active or self.finished:
             return
-
         text = self.dialogues[self.current_index]
         if self.char_index < len(text):
             self.char_index += self.speed
@@ -76,11 +75,12 @@ class Apple:
     def __init__(self, image, pos, filename):
         self.image = image
         self.pos = pos
-        # Remove extension from filename for display
+        # Remove extension for display
         self.filename = os.path.splitext(filename)[0]
         self.rect = self.image.get_rect(center=pos)
         self.box_rect = pygame.Rect(self.rect.left - 10, self.rect.top - 10,
-                                    self.rect.width + 20, self.rect.height + 40)  # box (+ space)
+                                    self.rect.width + 20, self.rect.height + 40)  # box + text space
+
 
 class AppleCountScene:
     def __init__(self):
@@ -122,6 +122,9 @@ class AppleCountScene:
         self.dialogue = TypewriterDialogue(self.screen, font_size=26, speed=2, margin=70)
         self.dialogue.set_dialogues(self.dialogue_lines)
 
+        self.mario_face = load_image(os.path.join(base_path, "mario", "marioFace.png"), scale=(120, 120))
+        self.mario_face_pos = (10, self.screen.get_height() - 120 - 10)
+
     def draw_apples(self):
         for apple in self.apples:
             pygame.draw.rect(self.screen, (255, 255, 255), apple.box_rect, 2)
@@ -152,6 +155,9 @@ class AppleCountScene:
             self.draw_apples()
             self.screen.blit(self.header_text, self.header_pos)
 
+            if self.mario_face:
+                self.screen.blit(self.mario_face, self.mario_face_pos)
+
             self.dialogue.update()
             self.dialogue.draw()
 
@@ -159,7 +165,7 @@ class AppleCountScene:
             self.draw_addresses()
 
             if self.dialogue.finished:
-                running = False  # or trigger next scene
+                running = False  # or transition next scene
 
             pygame.display.flip()
             self.clock.tick(60)

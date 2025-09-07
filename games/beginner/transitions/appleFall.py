@@ -3,7 +3,7 @@ import sys
 import os
 import random
 
-# -------- TypewriterDialogue class with fix --------
+# -------- TypewriterDialogue class --------
 class TypewriterDialogue:
     def __init__(self, screen, font_size=24, color=(255, 255, 255), speed=3, margin=20):
         self.screen = screen
@@ -30,7 +30,6 @@ class TypewriterDialogue:
     def update(self):
         if not self.active or self.finished:
             return
-
         text = self.dialogues[self.current_index]
         if self.char_index < len(text):
             self.char_index += self.speed
@@ -84,17 +83,19 @@ def load_frames(folder):
         if f.endswith(".png") or f.endswith(".jpeg") or f.endswith(".jpg")
     ]
 
+
 class Apple(pygame.sprite.Sprite):
     def __init__(self, image, pos):
         super().__init__()
         self.image = image
         self.rect = self.image.get_rect(center=pos)
 
+
 class BeginnerTransitionPart1:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((900, 700))
-        pygame.display.set_caption("Beginner Transition - Apple Fall 🍎")
+        pygame.display.set_caption("Gamified DSA - Apple Fall Transition")
         self.clock = pygame.time.Clock()
 
         base_path = os.path.join(os.path.dirname(__file__), "..", "assets")
@@ -126,7 +127,7 @@ class BeginnerTransitionPart1:
         self.mario_rect = None
 
         self.dialogue_texts = [
-            "Princess Peach: Hmm uuu huuuu~ (happily walking with basket)",
+            "Princess Peach: Hmm, uuu huuuu~ (happily walking with basket)",
             "Princess Peach: Aaaahhh!",
             "Princess Peach: Oh no, my apples!",
             "Mario: Ha-ha! It’s-a me, Mario!",
@@ -144,6 +145,13 @@ class BeginnerTransitionPart1:
         self.dialogue.set_dialogues(self.dialogue_texts)
 
         self.apples_spawned = False
+
+        self.billboard = load_image(os.path.join(base_path, "bg", "billboard.png"))
+        self.billboard_pos = [0, -self.billboard.get_height()]
+        self.billboard_speed = 4
+        self.billboard_state = "waiting"  # waiting, coming_down, pause, going_up, done
+        self.billboard_pause_timer = 0
+        self.billboard_pause_duration = 60
 
     def spawn_apples(self):
         area_x1, area_y1, area_x2, area_y2 = 357, 304, 775, 513
@@ -198,15 +206,14 @@ class BeginnerTransitionPart1:
                 self.mario_timer = 0
                 self.mario = self.mario_up[0]
                 self.mario_rect = self.mario.get_rect(midbottom=(450, 700))
-            if self.mario:
-                self.mario_timer += 1
-                if self.mario_timer > 10:
-                    self.mario_frame = (self.mario_frame + 1) % len(self.mario_up)
-                    self.mario_timer = 0
-                self.mario = self.mario_up[self.mario_frame]
-                if self.mario_rect.y > 500:
-                    self.mario_rect.y -= 2
-        elif action == "mario_idle" and self.mario and self.mario_up:
+            self.mario_timer += 1
+            if self.mario_timer > 10:
+                self.mario_frame = (self.mario_frame + 1) % len(self.mario_up)
+                self.mario_timer = 0
+            self.mario = self.mario_up[self.mario_frame]
+            if self.mario_rect.y > 500:
+                self.mario_rect.y -= 2
+        elif action == "mario_idle" and self.mario:
             self.mario = self.mario_up[0]
 
     def fade_out(self, speed=5):
@@ -216,7 +223,7 @@ class BeginnerTransitionPart1:
             fade.set_alpha(alpha)
             self.screen.blit(self.bg, (0, 0))
 
-            # Draw sprites and dialogue behind the fade
+            # Draw scene behind fade
             idx = self.dialogue.current_index
             action = self.dialogue_actions[idx] if idx < len(self.dialogue_actions) else None
             if action:
@@ -235,7 +242,14 @@ class BeginnerTransitionPart1:
             self.clock.tick(60)
 
     def run(self):
+        # Billboard initial state
+        self.billboard_state = "waiting"
+        self.billboard_pos = [0, -self.billboard.get_height()]
+        self.billboard_pause_timer = 0
+
         running = True
+        fade_done = False
+
         while running:
             self.screen.blit(self.bg, (0, 0))
 
@@ -244,35 +258,60 @@ class BeginnerTransitionPart1:
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-                    self.dialogue.next()
+                    if self.billboard_state == "waiting":
+                        self.dialogue.next()
 
-            self.dialogue.update()
+            if self.billboard_state == "waiting":
+                self.dialogue.update()
 
-            idx = self.dialogue.current_index
-            action = self.dialogue_actions[idx] if idx < len(self.dialogue_actions) else None
+            if self.dialogue.finished and self.billboard_state == "waiting":
+                self.billboard_state = "coming_down"
 
-            if action:
-                self.animate_princess(action)
-                if "mario" in action:
-                    self.animate_mario(action)
+            if self.billboard_state == "coming_down":
+                self.billboard_pos[1] += 4
+                center_y = self.screen.get_height() // 2 - self.billboard.get_height() // 2
+                if self.billboard_pos[1] >= center_y:
+                    self.billboard_pos[1] = center_y
+                    self.billboard_state = "pause"
+            elif self.billboard_state == "pause":
+                self.billboard_pause_timer += 1
+                if self.billboard_pause_timer >= 60:
+                    self.billboard_state = "going_up"
+            elif self.billboard_state == "going_up":
+                self.billboard_pos[1] -= 4
+                if self.billboard_pos[1] < -self.billboard.get_height():
+                    self.billboard_state = "done"
 
-            self.apples.draw(self.screen)
+            can_play = self.billboard_state == "waiting"
 
-            if self.princess:
-                self.screen.blit(self.princess, self.princess_rect)
-            if self.mario:
-                self.screen.blit(self.mario, self.mario_rect)
+            if can_play:
+                idx = self.dialogue.current_index
+                action = self.dialogue_actions[idx] if idx < len(self.dialogue_actions) else None
+                if action:
+                    self.animate_princess(action)
+                    if "mario" in action:
+                        self.animate_mario(action)
+                self.apples.draw(self.screen)
+                if self.princess:
+                    self.screen.blit(self.princess, self.princess_rect)
+                if self.mario:
+                    self.screen.blit(self.mario, self.mario_rect)
 
-            self.dialogue.draw()
+            if self.billboard_state != "done":
+                self.screen.blit(self.billboard, self.billboard_pos)
 
-            if self.dialogue.finished:
+            if can_play:
+                self.dialogue.draw()
+
+            if self.billboard_state == "done" and not fade_done:
                 self.fade_out()
+                fade_done = True
                 running = False
 
             pygame.display.flip()
             self.clock.tick(60)
 
-        # Transition to appleCount.py after fade out
+        # Transition to Apple Count scene
         from appleCount import AppleCountScene
         AppleCountScene().run()
 
