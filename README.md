@@ -1,4 +1,4 @@
-<img width="1280" height="720" alt="inter2" src="https://github.com/user-attachments/assets/7c7dbedf-1e0c-48b4-a67b-e2683ce851aa" />Gamifying DSA and making it more interactive
+Gamifying DSA and making it more interactive
 
 <img width="500" height="500" alt="DSA ARCADE" src="https://github.com/user-attachments/assets/6dff3f65-a125-49e3-91a7-b12fbd425912" />
 
