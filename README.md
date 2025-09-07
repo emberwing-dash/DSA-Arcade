@@ -8,3 +8,14 @@ App made using Python:
 - tk
 
 Website made using HTML, CSS and JavaScript:
+
+
+
+Game Level:
+1. Beginner:
+
+2. Intermediate
+
+3. Advanced
+
+
