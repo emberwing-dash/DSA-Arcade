@@ -29,6 +29,7 @@ link: https://my-site-wgz1llkh-vishalinipg.wix-vibe.com/
 
 <img width="987" height="748" alt="inter1" src="https://github.com/user-attachments/assets/0ed44881-42f3-438b-9c61-c5740ee1e0be" />
 <img width="1280" height="720" alt="inter2" src="https://github.com/user-attachments/assets/af7f85a8-5574-473f-83c6-429bcd4766fa" />
+<a href="https://www.canva.com/design/DAGyPlTKTzU/TUgrTt4PENrohH19asRQvQ/edit?utm_content=DAGyPlTKTzU&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton"> Dora The Explorer Prototype </a>
 
 <h2>
 3. Advanced: </h2>
