@@ -1,6 +1,6 @@
 <h1> Gamifying DSA and making it more interactive </h1>
 <p align="center">
-<img width="500" height="500" alt="DSA ARCADE" src="https://github.com/user-attachments/assets/6dff3f65-a125-49e3-91a7-b12fbd425912" />
+<img width="500" height="500" alt="486462880-6dff3f65-a125-49e3-91a7-b12fbd425912-removebg-preview" src="https://github.com/user-attachments/assets/a3e359d8-d7e5-4d3d-af1b-4069782821dd" />
 </p>
 
 <h2>
