@@ -33,6 +33,7 @@ Introduction to basic data structures.
 Simple problems with hints & visuals.
 
 <img width="600" src="https://github.com/user-attachments/assets/299358d1-b204-43f0-9515-109c241ba823" /> <img width="600" src="https://github.com/user-attachments/assets/54bb2f09-5724-4478-97b3-281cd5c81481" />
+
 🟡 Intermediate
 
 Medium-level challenges involving algorithms.
@@ -40,6 +41,7 @@ Medium-level challenges involving algorithms.
 Requires logic building and debugging skills.
 
 <img width="600" src="https://github.com/user-attachments/assets/0ed44881-42f3-438b-9c61-c5740ee1e0be" /> <img width="600" src="https://github.com/user-attachments/assets/af7f85a8-5574-473f-83c6-429bcd4766fa" />
+
 🔴 Advanced
 
 Complex problem-solving using graph algorithms & optimization.
@@ -47,6 +49,7 @@ Complex problem-solving using graph algorithms & optimization.
 Tests efficiency, not just correctness.
 
 <img width="200" src="https://github.com/user-attachments/assets/8f2d2912-b054-4f84-a71b-4621bd8b5d2b" />
+
 ✍️ Code Editor
 
 Syntax highlighting & multiple language support.
@@ -56,11 +59,13 @@ Default Hello World snippet when switching languages.
 Run & debug directly inside the app.
 
 <img width="700" src="https://github.com/user-attachments/assets/ba679ac4-1d23-43b2-ad9f-6ac537b24cb1" />
+
 🌐 Prototype Website
 
 Preview of the future DSA Arcade platform:
 
 <img width="700" src="https://github.com/user-attachments/assets/9a94e522-056c-49cc-9e2b-dd7ced868926" />
+
 🚩 How to Run
 
 Clone the repository
