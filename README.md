@@ -1,4 +1,3 @@
-<img width="1382" height="978" alt="Screenshot (20)" src="https://github.com/user-attachments/assets/998688ec-8c8c-43e6-a4b5-bc19e9626204" />You said:
 Gamifying DSA and making it more interactive
 
 <img width="500" height="500" alt="DSA ARCADE" src="https://github.com/user-attachments/assets/6dff3f65-a125-49e3-91a7-b12fbd425912" />
@@ -34,7 +33,3 @@ Game Level:
 Code Editor:
 
 <img width="1382" height="978" alt="Screenshot (20)" src="https://github.com/user-attachments/assets/7426204c-2011-4077-bdb6-4c754127841b" />
-
-<img width="1382" height="978" alt="Screenshot (20)" src="https://github.com/user-attachments/assets/ba679ac4-1d23-43b2-ad9f-6ac537b24cb1" />
-
-can u make readme file well organised with points. heading should be big and subt=headings too
