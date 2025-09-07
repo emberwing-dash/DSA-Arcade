@@ -1,6 +1,8 @@
 import pygame
 import os
 import sys
+from bg3 import BG3Scene   # import BG3Scene for transition
+
 
 # ---------------- Dora Animation ----------------
 class Dora:
@@ -162,11 +164,18 @@ class BG2Scene:
             self.dialogue.update()
 
             # Draw everything
-            self.screen.blit(self.bg_img, (0,0))
+            self.screen.blit(self.bg_img, (0, 0))
             self.dora.draw()
             self.dialogue.draw()
 
             pygame.display.flip()
+
+            # 🚀 Transition check
+            if self.dialogue.finished:
+                self.running = False
+                # Call BG3 scene after dialogues end
+                bg3 = BG3Scene(self.screen)
+                bg3.fade_in_out(10)
 
 
 # ---------------- Run BG2Scene ----------------
