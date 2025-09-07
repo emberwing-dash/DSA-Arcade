@@ -82,7 +82,8 @@ class App:
     # ---------------- UI States -----------------
     def show_start_ui(self):
         self.buttons = []
-        width, height = self.screen.get_size()
+        width = self.screen.get_width()
+        height = self.screen.get_height()
         x = (width - self.START_SIZE[0]) // 2
         y = height // 2
         self.buttons.append(ImageButton(self.images["start"], x, y + 100, self.show_choose_level_ui))
@@ -90,7 +91,8 @@ class App:
 
     def show_choose_level_ui(self):
         self.buttons = []
-        width, height = self.screen.get_size()
+        width = self.screen.get_width()
+        height = self.screen.get_height()
         x = (width - self.LEVEL_SIZE[0]) // 2
         start_y = height // 2 - (self.LEVEL_SIZE[1] * 3 + 30) // 2
 
@@ -105,14 +107,19 @@ class App:
             self.launch_bg1
         ))
 
+        # Advanced button launches BOTH editor and pacman game
+        def open_advanced():
+            self.launch_editor("Advanced")
+            self.launch_pacman()
+
         self.buttons.append(ImageButton(self.images["advanced"], x, start_y + (self.LEVEL_SIZE[1] + 15) * 2,
-                                        lambda: self.launch_editor("Advanced")))
+                                        open_advanced))
 
         back_x = width - self.BACK_SIZE[0] - 20
         back_y = height - self.BACK_SIZE[1] - 20
         self.buttons.append(ImageButton(self.images["back"], back_x, back_y, self.show_start_ui))
 
-    # ---------------- Launch appleFall.py -----------------
+    # ---------------- Launch Scripts / Apps -----------------
     def launch_apple_fall(self):
         apple_fall_path = os.path.join(os.path.dirname(__file__), "games", "beginner", "transitions", "appleFall.py")
         if os.path.exists(apple_fall_path):
@@ -122,17 +129,6 @@ class App:
         else:
             print(f"❌ appleFall.py not found at {apple_fall_path}")
 
-    # ---------------- Launch Tkinter Editor -----------------
-    def launch_editor(self, level):
-        def run_editor():
-            editor_root = tk.Tk()
-            editor_root.title(f"{level} Code Editor")
-            editor_root.geometry("900x700")
-            CodeEditorUI(editor_root)
-            editor_root.mainloop()
-        threading.Thread(target=run_editor).start()
-
-    # ---------------- Launch bg1.py -----------------
     def launch_bg1(self):
         bg1_path = os.path.join(os.path.dirname(__file__), "games", "intermediate", "transition", "bg1.py")
         if os.path.exists(bg1_path):
@@ -142,7 +138,24 @@ class App:
         else:
             print(f"❌ bg1.py not found at {bg1_path}")
 
-    # ---------------- Quit -----------------
+    def launch_editor(self, level):
+        def run_editor():
+            root = tk.Tk()
+            root.title(f"{level} Editor")
+            root.geometry("900x700")
+            CodeEditorUI(root)
+            root.mainloop()
+
+        threading.Thread(target=run_editor).start()
+
+    def launch_pacman(self):
+        pacman_path = os.path.join(os.path.dirname(__file__), "games", "advanced", "pacman.py")
+        if os.path.exists(pacman_path):
+            subprocess.Popen(["python", pacman_path])
+        else:
+            print(f"❌ pacman.py not found at {pacman_path}")
+
+    # ---------------- Utility -----------------
     def quit_game(self):
         pygame.quit()
         sys.exit()
@@ -151,7 +164,8 @@ class App:
     def run(self):
         while True:
             self.screen.fill((30, 30, 30))
-            width, height = self.screen.get_size()
+            width = self.screen.get_width()
+            height = self.screen.get_height()
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -159,17 +173,15 @@ class App:
                 for btn in self.buttons:
                     btn.handle_event(event)
 
-            # Draw logo (resize dynamically)
+            # Draw logo dynamically scaled
             if self.logo_original:
                 max_width = int(width * 0.5)
                 orig_w, orig_h = self.logo_original.get_size()
                 scale_ratio = max_width / orig_w
-                logo_width = max_width
-                logo_height = int(orig_h * scale_ratio)
-
-                self.logo = pygame.transform.smoothscale(self.logo_original, (logo_width, logo_height))
-
-                logo_x = (width - logo_width) // 2
+                logo_w = max_width
+                logo_h = int(orig_h * scale_ratio)
+                self.logo = pygame.transform.smoothscale(self.logo_original, (logo_w, logo_h))
+                logo_x = (width - logo_w) // 2
                 logo_y = 50
                 self.screen.blit(self.logo, (logo_x, logo_y))
 
@@ -180,6 +192,5 @@ class App:
             self.clock.tick(60)
 
 
-# ------------------- Run App -------------------
 if __name__ == "__main__":
     App()
